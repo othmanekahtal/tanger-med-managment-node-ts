@@ -2,7 +2,6 @@ export default class ErrorHandler extends Error {
   statusCode: number
   status: string
   isOperational: boolean
-
   constructor({message, statusCode}: Params) {
     super(message)
     this.statusCode = statusCode

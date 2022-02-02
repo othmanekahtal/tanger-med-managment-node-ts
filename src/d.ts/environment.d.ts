@@ -1,3 +1,4 @@
+import {Secret} from 'jsonwebtoken'
 declare global {
   namespace NodeJS {
     interface ProcessEnv {
@@ -6,12 +7,13 @@ declare global {
       DATABASE_PASSWORD: string
       HOSTED_DATABASE: string
       LOCAL_DATABASE: string
-      JWT_SECRET: string
+      JWT_SECRET: Secret
       JWT_EXPIRE: string | number
       EMAIL_USERNAME: string
       EMAIL_PASSWORD: string
       EMAIL_HOST: string
       EMAIL_PORT: number
+      JWT_COOKIE_EXPIRES_IN: string | number
     }
   }
 }

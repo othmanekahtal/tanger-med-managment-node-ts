@@ -1,4 +1,4 @@
-import express from 'express'
+import express, {NextFunction} from 'express'
 import morgan from 'morgan'
 import rateLimit from 'express-rate-limit'
 import helmet from 'helmet'
@@ -6,10 +6,9 @@ import mongoSanitize from 'express-mongo-sanitize'
 import xss from 'xss-clean'
 import hpp from 'hpp'
 const server = express()
-import Users from './routes/usersRoutes'
-import Auth from './routes/authRoutes'
-import errorHandler from './utils/errorHandler'
-import errorHandle from './controllers/globalErrorHandler'
+import Auth from '@routes/authRoutes'
+import errorHandler from '@utils/errorHandler'
+import errorHandle from '@controllers/middleware/globalErrorHandler'
 
 // if cycle not finished yet At this moment , we have a router that handled in the previous middlewares
 /**
@@ -60,17 +59,19 @@ server.use(
 // Serving static files
 server.use(express.static(`${__dirname}/public`))
 
-server.use('/api/v1/users', Users)
 server.use('/api/v1', Auth)
 
-server.all('*', (req, res, next) => {
-  next(
-    new errorHandler({
-      message: `Can't find ${req.originalUrl} on this server`,
-      statusCode: 404,
-    }),
-  )
-})
+server.all(
+  '*',
+  (req: express.Request, _: express.Response, next: NextFunction) => {
+    next(
+      new errorHandler({
+        message: `Can't find ${req.originalUrl} on this server`,
+        statusCode: 404,
+      }),
+    )
+  },
+)
 
 /*
 we create a central middleware for handle all errors

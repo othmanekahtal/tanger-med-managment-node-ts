@@ -1,6 +1,6 @@
-import ErrorHandler from './../utils/errorHandler'
+import ErrorHandler from '@utils/errorHandler'
 import {Response, Request, NextFunction} from 'express'
-const errorDev = (error: ErrorHandler, res: Response) =>
+const errorDev = (error: ErrorHttp, res: Response) =>
   res.status(error.statusCode).json({
     status: error.status,
     message: error.message,
@@ -8,7 +8,7 @@ const errorDev = (error: ErrorHandler, res: Response) =>
     stack: error.stack,
   })
 
-const errorProd = (error: ErrorHandler, res: Response) => {
+const errorProd = (error: ErrorHttp, res: Response) => {
   if (error.isOperational) {
     return res.status(error.statusCode).json({
       status: error.status,
@@ -33,7 +33,6 @@ export default (
   } else if (process.env.NODE_ENV === 'production') {
     let err: ErrorHttp = {
       ...error,
-      path: error.path,
       name: error.name,
       message: error.message,
     }
@@ -49,10 +48,10 @@ export default (
         message:
           Object.entries(err.keyValue).length === 1
             ? `The field with name '${Object.entries(err.keyValue)
-                .map(el => `${el[0]} : ${el[1]}`)
+                .map((el: Array<any | Object>) => `${el[0]} : ${el[1]}`)
                 .join(' | ')}' is duplicated `
             : `The fields with names '${Object.entries(err.keyValue)
-                .map(el => `${el[0]} : ${el[1]}`)
+                .map((el: Array<any | Object>) => `${el[0]} : ${el[1]}`)
                 .join(' | ')}' are duplicated `,
         statusCode: 400,
       })
@@ -60,7 +59,7 @@ export default (
     if (err.name === 'ValidationError') {
       const errors = err.errors
       const message = Object.entries(errors)
-        .map(el => `${el[0]}:${el[1].message}`)
+        .map((el: Array<any | Object>) => `${el[0]}:${el[1].message as string}`)
         .join(' & ')
       err = new ErrorHandler({
         statusCode: 400,
