@@ -8,7 +8,7 @@ import hpp from 'hpp'
 const server = express()
 import Auth from '@routes/authRoutes'
 import errorHandler from '@utils/errorHandler'
-import errorHandle from '@controllers/middleware/globalErrorHandler'
+import errorHandle from '@services/errorException'
 
 // if cycle not finished yet At this moment , we have a router that handled in the previous middlewares
 /**

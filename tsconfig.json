@@ -35,7 +35,10 @@
       "@routes/*": ["routes/*"],
       "@services/*": ["services/*"],
       "@models/*": ["models/*"],
-      "@controllers/*": ["controllers/*"]
+      "@controllers/*": ["controllers/*"],
+      "@schemas/*": ["schemas/*"],
+      "@entities/*": ["entities/*"],
+      "@dto/*": ["dto/*"]
     } /* Specify a set of entries that re-map imports to additional lookup locations. */,
     // "rootDirs": [],                                   /* Allow multiple folders to be treated as one when resolving modules. */
     // "typeRoots": [],                                  /* Specify multiple folders that act like `./node_modules/@types`. */
