@@ -1,11 +1,17 @@
+import {Document, Query, QueryWithHelpers} from 'mongoose'
+import * as core from 'express-serve-static-core'
+
 export default class QueryHandling {
-  // TODO:
-  // add types for properties
-  #query
-  #queryString
-  // TODO:
-  // delete any here bro
-  constructor(query: any, queryString: any) {
+  #query:
+    | Query<never, Document, Document[]>
+    | QueryWithHelpers<never, Document, Document[]>
+  #queryString: core.Query
+  constructor(
+    query:
+      | Query<never, Document, Document[]>
+      | QueryWithHelpers<never, Document, Document[]>,
+    queryString: core.Query,
+  ) {
     this.#query = query
     this.#queryString = queryString
   }
@@ -24,6 +30,8 @@ export default class QueryHandling {
         match => `$${match}`,
       ),
     )
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     this.#query = this.#query.find(query)
 
     return this
@@ -32,6 +40,8 @@ export default class QueryHandling {
   sort() {
     if (this.#queryString.order) {
       this.#query = this.#query.sort(
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         this.#queryString.order.split(',').join(' '),
       )
     } else {
@@ -44,7 +54,9 @@ export default class QueryHandling {
   limitFields() {
     if (this.#queryString.fields) {
       this.#query = this.#query.select(
-        this.#queryString.fields.split(',').join(' '),
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        this.#queryString.fields?.split(',').join(' '),
       )
     } else {
       this.#query = this.#query.select('-__v')
@@ -56,8 +68,6 @@ export default class QueryHandling {
     const page = Number(this.#queryString.page) || 1
     const limit = Number(this.#queryString.limit) || 100
     const skip = (page - 1) * limit
-    // const numTours = this.#query.countDocuments();
-    // if (this.#queryString.page && skip >= numTours) new Error('This page does not exists !');
     this.#query = this.#query.skip(skip).limit(limit)
     return this
   }

@@ -1,9 +1,17 @@
 import userSchema from '@schemas/user.schema'
-const mongoose = require('mongoose')
+import mongoose, {Model} from 'mongoose'
+import {UserBaseDocument} from '@dto/UserBaseDocument.dto'
 
-userSchema.pre('save', hashPassword)
-userSchema.pre(/^find/, willBeActive)
+import {
+  hashPassword,
+  willBeActive,
+  changedAfter,
+  createPasswordResetToken,
+  correctPassword,
+} from '@models/hooks/userModel.hooks'
+userSchema.pre<UserBaseDocument>('save', hashPassword)
+userSchema.pre<Model<UserBaseDocument>>(/^find/, willBeActive)
 userSchema.methods.correctPassword = correctPassword
 userSchema.methods.changedAfter = changedAfter
-userSchema.methods.createPasswordResetToken = createPasswordResetToken // error happens when we import function in another file
-export default mongoose.model('user', userSchema)
+userSchema.methods.createPasswordResetToken = createPasswordResetToken
+export default mongoose.model<UserBaseDocument>('user', userSchema)

@@ -1,16 +1,8 @@
-const validator = require('validator')
-const mongoose = require('mongoose')
-const {Schema} = mongoose
-const {
-  willBeActive,
-  hashPassword,
-  changedAfter,
-  correctPassword,
-  createPasswordResetToken,
-} = require('../hooks/ModelsUtils')
-
+import validator from 'validator'
+import {Schema} from 'mongoose'
+import {UserBaseDocument} from '@dto/UserBaseDocument.dto'
 // we need to getting schema class in mongoose:
-export default new Schema({
+export default new Schema<UserBaseDocument>({
   username: {
     type: String,
     required: [true, 'An user must have a username'],
@@ -50,7 +42,7 @@ export default new Schema({
     minlength: [10, 'An password must have more or equal then 10 characters'],
     validate: {
       message: 'Passwords not the same !',
-      validator: function (element: string): boolean {
+      validator: function (this: User, element: string): boolean {
         return this.password === element
       },
     },

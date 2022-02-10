@@ -4,19 +4,24 @@ import AsyncCatch from '@utils/asyncCatch'
 import userModel from '@models/userModel'
 import jwt, {JwtPayload} from 'jsonwebtoken'
 import ErrorHandler from '@utils/errorHandler'
-import mail from '@utils/mail'
+import mail from '@utils/SendEmail'
 import crypto from 'crypto'
 const generateToken = (id: Types.ObjectId) =>
   jwt.sign({id}, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRE,
   })
-const sendTokenResponse = (
-  response: Response,
-  user: userModel,
-  statusCode: number,
-) => {
+const sendTokenResponse = ({
+  response,
+  user,
+  statusCode,
+}: // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+{
+  response: Response // @ts-ignore
+  user: Document<unknown, any, User> & User & {_id: Types.ObjectId}
+  statusCode: number
+}) => {
   user.password = undefined
-  const token = generateToken(user.id)
+  const token = generateToken(user._id)
   const cookieOptions: CookieOptions = {
     expires: new Date(
       Date.now() + +process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
@@ -32,7 +37,7 @@ const sendTokenResponse = (
     user,
   })
 }
-exports.login = AsyncCatch(
+export const login = AsyncCatch(
   async (req: Request, res: Response, next: NextFunction) => {
     const {email, password} = req.body
     if (!email || !password)
@@ -42,12 +47,18 @@ exports.login = AsyncCatch(
           statusCode: 400,
         }),
       )
-    let response = await userModel.findOne({email})?.select('+password')
+    const response = await userModel.findOne({email})?.select('+password')
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     const passwordsMatch = await response?.correctPassword({
       candidatePassword: response.password,
       userPassword: password,
     })
-    response && passwordsMatch && sendTokenResponse(res, response, 200)
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    response &&
+      passwordsMatch &&
+      sendTokenResponse({response: res, user: response, statusCode: 200})
 
     next(
       new ErrorHandler({
@@ -58,14 +69,14 @@ exports.login = AsyncCatch(
   },
 )
 
-exports.signup = AsyncCatch(async (req: Request, res: Response) => {
+export const signup = AsyncCatch(async (req: Request, res: Response) => {
   const user = req.body
   user.role = undefined
-  let response = await userModel.create(user)
-  sendTokenResponse(res, response, 201)
+  const response = await userModel.create(user)
+  sendTokenResponse({response: res, user: response, statusCode: 201})
 })
 
-exports.protect = AsyncCatch(
+export const protect = AsyncCatch(
   async (req: Request, res: Response, next: NextFunction) => {
     /// we need to verify tree layer : token,verification token,check if user is exists ,check if user change password after the token was issued
     let token
@@ -92,6 +103,8 @@ exports.protect = AsyncCatch(
           statusCode: 401,
         }),
       )
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     if (!userFresh.changedAfter({date: decodedToken.iat})) {
       next(
         new ErrorHandler({
@@ -100,12 +113,11 @@ exports.protect = AsyncCatch(
         }),
       )
     }
-    // TODO:
     req.body.user = userFresh
     next()
   },
 )
-exports.onlyFor =
+export const onlyFor =
   (...roles: Array<string | any>) =>
   (req: Request, res: Response, next: NextFunction) => {
     if (!roles.includes(req.body.user.role)) {
@@ -118,7 +130,7 @@ exports.onlyFor =
     }
     next()
   }
-exports.forgotPassword = AsyncCatch(
+export const forgotPassword = AsyncCatch(
   async (req: Request, res: Response, next: NextFunction) => {
     // 1- get user based on POSTed email
     const email = req.body.email
@@ -131,6 +143,8 @@ exports.forgotPassword = AsyncCatch(
         }),
       )
     // 2-generate the random reset token
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     const resetToken = user.createPasswordResetToken()
     await user.save({validateBeforeSave: false})
     const resetURL = `${req.protocol}://${req.get(
@@ -157,7 +171,7 @@ exports.forgotPassword = AsyncCatch(
     }
   },
 )
-exports.resetPassword = AsyncCatch(
+export const resetPassword = AsyncCatch(
   async (req: Request, res: Response, next: NextFunction) => {
     const {token} = req.params
     const {password, confirmPassword} = req.body
@@ -174,7 +188,7 @@ exports.resetPassword = AsyncCatch(
       .update(token)
       .digest('hex')
     console.log(encryptedToken)
-    let user = await userModel.findOne({
+    const user = await userModel.findOne({
       resetToken: encryptedToken,
       resetTokenExpiration: {$gt: Date.now()},
     })
@@ -186,15 +200,15 @@ exports.resetPassword = AsyncCatch(
         }),
       )
     }
-    user.resetToken = user.resetTokenExpiration = undefined
-    user.updatePasswordAt = Date.now()
-    user.password = password
-    user.confirmPassword = confirmPassword
-    await user.save()
-    sendTokenResponse(res, user, 200)
+    user!.resetToken = user!.resetTokenExpiration = undefined
+    user!.updatePasswordAt = new Date(Date.now())
+    user!.password = password
+    user!.confirmPassword = confirmPassword
+    await user!.save()
+    sendTokenResponse({response: res, user: user, statusCode: 200})
   },
 )
-exports.updatePassword = AsyncCatch(
+export const updatePassword = AsyncCatch(
   async (req: Request, res: Response, next: NextFunction) => {
     console.log(req.body)
     const {
@@ -206,9 +220,12 @@ exports.updatePassword = AsyncCatch(
       },
     } = req
     const user = await userModel.findById(id).select('+password')
+
     if (
-      !(await user.correctPassword({
-        candidatePassword: user.password,
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      !(await user!.correctPassword({
+        candidatePassword: user!.password,
         userPassword: passwordCurrent,
       }))
     ) {
@@ -219,10 +236,10 @@ exports.updatePassword = AsyncCatch(
         }),
       )
     }
-    user.updatePasswordAt = Date.now()
-    user.password = password
-    user.confirmPassword = confirmPassword
-    await user.save()
-    sendTokenResponse(res, user, 200)
+    user!.updatePasswordAt = new Date(Date.now())
+    user!.password = password
+    user!.confirmPassword = confirmPassword
+    await user!.save()
+    sendTokenResponse({response: res, user: user, statusCode: 200})
   },
 )

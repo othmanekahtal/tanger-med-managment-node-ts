@@ -1,5 +1,5 @@
 import ErrorHandler from '@utils/errorHandler'
-import {Response, Request, NextFunction} from 'express'
+import {Response, Request} from 'express'
 const errorDev = (error: ErrorHttp, res: Response) =>
   res.status(error.statusCode).json({
     status: error.status,
@@ -20,12 +20,7 @@ const errorProd = (error: ErrorHttp, res: Response) => {
     message: 'Something went very wrong!',
   })
 }
-export default (
-  error: ErrorHandler,
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
+export default (error: ErrorHandler, req: Request, res: Response) => {
   error.statusCode ||= 500
   error.status ||= 'error'
   if (process.env.NODE_ENV === 'development') {
@@ -48,9 +43,11 @@ export default (
         message:
           Object.entries(err.keyValue).length === 1
             ? `The field with name '${Object.entries(err.keyValue)
+                // eslint-disable-next-line @typescript-eslint/ban-types
                 .map((el: Array<any | Object>) => `${el[0]} : ${el[1]}`)
                 .join(' | ')}' is duplicated `
             : `The fields with names '${Object.entries(err.keyValue)
+                // eslint-disable-next-line @typescript-eslint/ban-types
                 .map((el: Array<any | Object>) => `${el[0]} : ${el[1]}`)
                 .join(' | ')}' are duplicated `,
         statusCode: 400,
@@ -59,6 +56,7 @@ export default (
     if (err.name === 'ValidationError') {
       const errors = err.errors
       const message = Object.entries(errors)
+        // eslint-disable-next-line @typescript-eslint/ban-types
         .map((el: Array<any | Object>) => `${el[0]}:${el[1].message as string}`)
         .join(' & ')
       err = new ErrorHandler({
