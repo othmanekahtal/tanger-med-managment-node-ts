@@ -1,6 +1,6 @@
 import validator from 'validator'
 import {Schema} from 'mongoose'
-import {UserBaseDocument} from '@dto/UserBaseDocument.dto'
+import {UserBaseDocument} from '@entities/UserBaseDocument.entity'
 // we need to getting schema class in mongoose:
 export default new Schema<UserBaseDocument>({
   username: {

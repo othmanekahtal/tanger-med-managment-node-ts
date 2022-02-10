@@ -1,6 +1,6 @@
 import userSchema from '@schemas/user.schema'
 import mongoose, {Model} from 'mongoose'
-import {UserBaseDocument} from '@dto/UserBaseDocument.dto'
+import {UserBaseDocument} from '@entities/UserBaseDocument.entity'
 
 import {
   hashPassword,

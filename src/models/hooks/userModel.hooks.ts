@@ -1,4 +1,4 @@
-import {UserBaseDocument} from '@dto/UserBaseDocument.dto'
+import {UserBaseDocument} from '@entities/UserBaseDocument.entity'
 import bcrypt from 'bcryptjs'
 import crypto from 'crypto'
 import {Model} from 'mongoose'
