@@ -1,4 +1,4 @@
-import express, {NextFunction} from 'express'
+import express, {NextFunction, Request, Response} from 'express'
 import morgan from 'morgan'
 import rateLimit from 'express-rate-limit'
 import helmet from 'helmet'
@@ -61,16 +61,13 @@ server.use(express.static(`${__dirname}/public`))
 
 server.use('/api/v1', Auth)
 
-server.all(
-  '*',
-  (req: express.Request, _: express.Response, next: NextFunction) => {
-    next(
-      new errorHandler({
-        message: `Can't find ${req.originalUrl} on this server`,
-        statusCode: 404,
-      }),
-    )
-  },
+server.all('*', (req: Request, _: Response, next: NextFunction) =>
+  next(
+    new errorHandler({
+      message: `Can't find ${req.originalUrl} on this server`,
+      statusCode: 404,
+    }),
+  ),
 )
 
 /*
