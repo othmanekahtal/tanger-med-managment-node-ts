@@ -5,7 +5,7 @@ import {
   forgotPassword,
   updatePassword,
   resetPassword,
-} from '@controllers/authController'
+} from '@controllers/auth.controller'
 import express from 'express'
 const router = express.Router()
 router.route('/signup').post(signup)

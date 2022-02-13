@@ -11,9 +11,10 @@
     "@services": "./dist/services",
     "@models": "./dist/models",
     "@controllers": "./dist/controllers",
-    "@schemas": "./dist/schemas/",
-    "@entities": "./dist/entities/",
-    "@dto": "./dist/dto/"
+    "@schemas": "./dist/schemas",
+    "@entities": "./dist/entities",
+    "@dto": "./dist/dto",
+    "@interfaces": "./dist/interfaces"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
