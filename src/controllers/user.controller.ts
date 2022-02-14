@@ -1,7 +1,10 @@
 import {Response, Request, NextFunction} from 'express'
 import AsyncCatch from '@utils/asyncCatch'
 import ErrorHandler from '@utils/errorHandler'
-import {getAllUser, updateUser as updateUserService} from '@services/index'
+import {
+  getAllUser,
+  updateUser as updateUserService,
+} from '@services/index.service'
 import {Types} from 'mongoose'
 
 const filterObj = (obj: {[x: string]: string}, ...allowedFields: string[]) => {
