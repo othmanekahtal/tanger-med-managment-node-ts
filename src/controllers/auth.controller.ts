@@ -12,14 +12,13 @@ import {
   validatePassword,
   findUserById,
   generatePasswordResetToken,
-  saveUserWithoutValidation,
   saveUser,
-} from '@services/auth.service'
+} from '@services/index.service'
 const generateToken = (id: Types.ObjectId) =>
   jwt.sign({id}, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRE,
   })
-export const sendTokenResponse = ({
+const sendTokenResponse = ({
   response,
   user,
   statusCode,
@@ -151,7 +150,7 @@ export const forgotPassword = AsyncCatch(
       )
     // 2-generate the random reset token
     const resetToken = await generatePasswordResetToken(user)
-    await saveUserWithoutValidation(user)
+    await saveUser(user, {validateBeforeSave: false})
     const resetURL = `${req.protocol}://${req.get(
       'host',
     )}/api/v1/reset-password/${resetToken}`
@@ -166,7 +165,7 @@ export const forgotPassword = AsyncCatch(
       res.status(200).json({status: 'success', message: 'check your email'})
     } catch (error) {
       user.resetTokenExpiration = user.resetToken = undefined
-      await saveUserWithoutValidation(user)
+      await saveUser(user, {validateBeforeSave: false})
       return next(
         new ErrorHandler({
           message: 'email not send try later!',

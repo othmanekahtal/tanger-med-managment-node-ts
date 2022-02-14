@@ -1,7 +1,7 @@
 import {Response, Request, NextFunction} from 'express'
 import AsyncCatch from '@utils/asyncCatch'
 import ErrorHandler from '@utils/errorHandler'
-import {getAllUser, updateUser} from '@services/user.service'
+import {getAllUser, updateUser as updateUserService} from '@services/index'
 import {Types} from 'mongoose'
 
 const filterObj = (obj: {[x: string]: string}, ...allowedFields: string[]) => {
@@ -27,14 +27,16 @@ export const getAllUsers = AsyncCatch(
   },
 )
 
-exports.getUser = AsyncCatch(async (request: Request, response: Response) => {
-  response.status(500).json({
-    message: 'failed',
-    result: '<route not define yeat>',
-  })
-})
+export const getUser = AsyncCatch(
+  async (request: Request, response: Response) => {
+    response.status(500).json({
+      message: 'failed',
+      result: '<route not define yeat>',
+    })
+  },
+)
 
-exports.updateUser = AsyncCatch(
+export const updateUser = AsyncCatch(
   async (req: Request, res: Response, next: NextFunction) => {
     const {id} = req.body
     // 1) Create error if user send password data
@@ -52,10 +54,14 @@ exports.updateUser = AsyncCatch(
     const filteredBody = filterObj(req.body, 'name', 'email')
 
     // 3) Update user document
-    const updatedUser = await updateUser(id as Types.ObjectId, filteredBody, {
-      new: true,
-      runValidators: true,
-    })
+    const updatedUser = await updateUserService(
+      id as Types.ObjectId,
+      filteredBody,
+      {
+        new: true,
+        runValidators: true,
+      },
+    )
 
     res.status(200).json({
       status: 'success',
@@ -66,10 +72,10 @@ exports.updateUser = AsyncCatch(
   },
 )
 
-exports.deleteUser = AsyncCatch(
+export const deleteUser = AsyncCatch(
   async (req: Request, res: Response, next: NextFunction) => {
     const {id} = req.body
-    await updateUser(id as Types.ObjectId, {active: false})
+    await updateUserService(id as Types.ObjectId, {active: false})
     res.status(204).json({
       status: 'success',
       data: null,

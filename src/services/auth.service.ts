@@ -2,6 +2,7 @@ import {UserBaseDocument} from '@entities/UserBaseDocument.entity'
 import userModel from '@models/userModel'
 import {ValidatePasswordParamDefinition} from '@interfaces/ValidatePasswordParamDefinition'
 import {ValidatePasswordChangedAfterTokenDefinition} from '@interfaces/ValidatePasswordChangedAfterTokenDefinition'
+import {QueryOptions} from 'mongoose'
 
 export const createUser = async (user: User): Promise<UserBaseDocument> =>
   await userModel.create(user)
@@ -33,10 +34,7 @@ export const generatePasswordResetToken = (
   document: UserBaseDocument,
 ): Promise<void> => document.createPasswordResetToken()
 
-export const saveUserWithoutValidation = async (
-  document: UserBaseDocument,
-): Promise<UserBaseDocument> => await document.save({validateBeforeSave: false})
-
 export const saveUser = async (
   document: UserBaseDocument,
-): Promise<UserBaseDocument> => await document.save()
+  options?: QueryOptions,
+): Promise<UserBaseDocument> => await document.save(options)

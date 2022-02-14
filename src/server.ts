@@ -6,9 +6,9 @@ import mongoSanitize from 'express-mongo-sanitize'
 import xss from 'xss-clean'
 import hpp from 'hpp'
 const server = express()
-import Auth from '@routes/authRoutes'
+import {authRoute} from '@routes/index.route'
 import errorHandler from '@utils/errorHandler'
-import errorHandle from '@services/errorException.service'
+import {ErrorExceptionService} from '@services/index.service'
 
 // if cycle not finished yet At this moment , we have a router that handled in the previous middlewares
 /**
@@ -59,7 +59,7 @@ server.use(
 // Serving static files
 server.use(express.static(`${__dirname}/public`))
 
-server.use('/api/v1', Auth)
+server.use('/api/v1', authRoute)
 
 server.all('*', (req: Request, _: Response, next: NextFunction) =>
   next(
@@ -73,7 +73,7 @@ server.all('*', (req: Request, _: Response, next: NextFunction) =>
 /*
 we create a central middleware for handle all errors
  */
-server.use(errorHandle)
+server.use(ErrorExceptionService)
 /**
  * if we pass any parameter to next() function automatically express will know that was an error
  * when we pass param to next() express skip all middlewares in stack to the error handler
