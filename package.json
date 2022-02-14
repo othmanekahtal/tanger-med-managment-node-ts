@@ -43,8 +43,7 @@
     "check-format": "prettier --check .",
     "test": "yarn run prettier-write && yarn run check-format && yarn run check-lint && yarn run check-types ",
     "build": "tsc --build tsconfig.json",
-    "clean": "rm -rf build && mkdir build",
-    "production": "clean && tsc --build && node ./dist/app.js"
+    "production": " tsc --build && node ./dist/app.js"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
