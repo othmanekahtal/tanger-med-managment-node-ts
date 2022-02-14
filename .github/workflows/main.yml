@@ -2,7 +2,7 @@ name: Deploy
 on:
   push:
     branches:
-      - main
+      - master
 jobs:
   heroku-deploy:
     runs-on: ubuntu-latest
