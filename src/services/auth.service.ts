@@ -9,7 +9,6 @@ export const createUser = async (user: User): Promise<UserBaseDocument> =>
 export const findUser = async ({...fields}): Promise<UserBaseDocument | null> =>
   await userModel.findOne(fields)?.select('+password')
 
-export const updateUser = async (): Promise<any> => {}
 export const validatePassword = async ({
   document,
   userPassword,
