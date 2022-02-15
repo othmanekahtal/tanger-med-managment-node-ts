@@ -14,6 +14,7 @@ import {
   generatePasswordResetToken,
   saveUser,
 } from '@services/index.service'
+import asyncCatch from '@utils/asyncCatch'
 const generateToken = (id: Types.ObjectId) =>
   jwt.sign({id}, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRE,
@@ -246,5 +247,12 @@ export const updatePassword = AsyncCatch(
     user!.confirmPassword = confirmPassword
     await saveUser(user!)
     sendTokenResponse({response: res, user: user!, statusCode: 200})
+  },
+)
+export const logout = asyncCatch(
+  async (req: Request, res: Response, next: NextFunction) => {
+    res.cookie('jwt', '', {maxAge: 0})
+    res.cookie('jwt-refresh', '', {maxAge: 0})
+    res.status(204).json({})
   },
 )
