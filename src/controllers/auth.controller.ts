@@ -89,7 +89,7 @@ export const protect = AsyncCatch(
   async (req: Request, res: Response, next: NextFunction) => {
     let token: string | undefined
     token = req.cookies['jwt']
-    console.log(token)
+    console.log(req.cookies)
     !token &&
       next(
         new ErrorHandler({message: "You're not authorized !", statusCode: 401}),
