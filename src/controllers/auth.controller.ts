@@ -40,7 +40,7 @@ const sendTokenResponse = ({
   response.cookie('jwt', token, cookieOptions)
   return response.status(statusCode).json({
     status: 'success',
-    token,
+    // token,
     user,
   })
 }
@@ -88,10 +88,7 @@ export const signup = AsyncCatch(async (req: Request, res: Response) => {
 export const protect = AsyncCatch(
   async (req: Request, res: Response, next: NextFunction) => {
     let token: string | undefined
-    req.headers.authorization &&
-      req.headers.authorization.startsWith('Bearer') &&
-      (token = req.headers.authorization.split(' ').at(-1))
-
+    token = req.cookies['jwt']
     !token &&
       next(
         new ErrorHandler({message: "You're not authorized !", statusCode: 401}),
