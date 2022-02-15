@@ -9,6 +9,7 @@ const server = express()
 import {authRoute} from '@routes/index.route'
 import errorHandler from '@utils/errorHandler'
 import {ErrorExceptionService} from '@services/index.service'
+import cookieParser from 'cookie-parser'
 
 // if cycle not finished yet At this moment , we have a router that handled in the previous middlewares
 /**
@@ -18,7 +19,7 @@ import {ErrorExceptionService} from '@services/index.service'
 // 1) GLOBAL MIDDLEWARES
 // Set security HTTP headers
 server.use(helmet())
-
+server.use(cookieParser())
 // Development logging
 if (process.env.NODE_ENV === 'development') {
   server.use(morgan('dev'))

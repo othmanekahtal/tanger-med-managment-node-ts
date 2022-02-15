@@ -89,7 +89,6 @@ export const protect = AsyncCatch(
   async (req: Request, res: Response, next: NextFunction) => {
     let token: string | undefined
     token = req.cookies['jwt']
-    console.log(req.cookies)
     !token &&
       next(
         new ErrorHandler({message: "You're not authorized !", statusCode: 401}),
@@ -101,13 +100,13 @@ export const protect = AsyncCatch(
     const userFresh: UserBaseDocument | null = await findUserById(
       decodedToken.id,
     )
-    if (!userFresh) return
-    next(
-      new ErrorHandler({
-        message: 'The user belonging to this token does no longer exist.',
-        statusCode: 401,
-      }),
-    )
+    if (!userFresh)
+      return next(
+        new ErrorHandler({
+          message: 'The user belonging to this token does no longer exist.',
+          statusCode: 401,
+        }),
+      )
 
     !userFresh.changedAfter({date: decodedToken.iat}) &&
       next(
@@ -211,7 +210,6 @@ export const resetPassword = AsyncCatch(
 )
 export const updatePassword = AsyncCatch(
   async (req: Request, res: Response, next: NextFunction) => {
-    console.log(req.body)
     const {
       body: {
         password,
@@ -220,12 +218,20 @@ export const updatePassword = AsyncCatch(
         user: {id},
       },
     } = req
+    if (!password || !confirmPassword || !passwordCurrent)
+      return next(
+        new ErrorHandler({
+          message:
+            'please send necessary fields (password ,confimation of password,new password).',
+          statusCode: 401,
+        }),
+      )
     const user = await findUserById(id)
-
+    console.log(user)
     if (
       !(await user!.correctPassword({
-        candidatePassword: user!.password!,
-        userPassword: passwordCurrent,
+        candidatePassword: passwordCurrent,
+        userPassword: user!.password!,
       }))
     ) {
       return next(
