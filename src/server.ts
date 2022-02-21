@@ -6,7 +6,7 @@ import mongoSanitize from 'express-mongo-sanitize'
 import xss from 'xss-clean'
 import hpp from 'hpp'
 const server = express()
-import {authRoute} from '@routes/index.route'
+import {authRoute, systemRoute} from '@routes/index.route'
 import errorHandler from '@utils/errorHandler'
 import {ErrorExceptionService} from '@services/index.service'
 import cookieParser from 'cookie-parser'
@@ -59,8 +59,8 @@ server.use(
 
 // Serving static files
 server.use(express.static(`${__dirname}/public`))
-
 server.use('/api/v1', authRoute)
+server.use('/api/v1/system', systemRoute)
 
 server.all('*', (req: Request, _: Response, next: NextFunction) =>
   next(
