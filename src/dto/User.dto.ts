@@ -1,7 +1,7 @@
 interface User {
   username: string
   email: string
-  role?: 'admin' | 'guide' | 'lead-guide' | 'user'
+  role?: 'superAdmin' | 'guide' | 'lead-guide' | 'user'
   password?: string
   confirmPassword?: string
   resetToken?: string

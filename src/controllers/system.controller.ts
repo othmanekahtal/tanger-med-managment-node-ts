@@ -4,6 +4,7 @@ import asyncCatch from '@utils/asyncCatch'
 import {
   getSystemDocument,
   updateSystem as updateSystemService,
+  initSystem as initSystemService,
 } from '@services/index.service'
 
 export const showSystemInfo = asyncCatch(
@@ -11,7 +12,7 @@ export const showSystemInfo = asyncCatch(
     const {user} = req.body
     const infoSystem = await getSystemDocument()
     if (!infoSystem) {
-      return res.json(200).json({
+      return res.status(200).json({
         message:
           user.role != 'superAdmin'
             ? 'not information yeat!'
@@ -19,7 +20,7 @@ export const showSystemInfo = asyncCatch(
         status: 'sucess',
       })
     }
-    return res.json(200).json({
+    return res.status(200).json({
       status: 'sucess',
       data: infoSystem,
     })
@@ -28,9 +29,14 @@ export const showSystemInfo = asyncCatch(
 
 export const updateSystem = asyncCatch(
   async (req: Request, res: Response, next: NextFunction) => {
-    const data = req.body
+    const data: {[x: string]: string | number | Date | undefined} = req.body
     data.user = data.createdAt = data.updatedAt = undefined
-    let system = await getSystemDocument()
+    const system = await updateSystemService(
+      {...data},
+      {runValidators: true, new: true},
+    )
+    console.log(system)
+
     if (!system) {
       return next(
         new ErrorHandler({
@@ -39,12 +45,19 @@ export const updateSystem = asyncCatch(
         }),
       )
     }
-    const document = {...system, ...data}
-    document.updatedAt = new Date(Date.now() + 1)
-    const newSystem = await updateSystemService(document)
     res.status(201).json({
-      data: newSystem,
+      data: system,
       status: 'success',
+    })
+  },
+)
+export const initSystem = asyncCatch(
+  async (req: Request, res: Response, _: NextFunction) => {
+    const data = req.body
+    data.user = undefined
+    return res.status(201).json({
+      status: 'success',
+      data: await initSystemService(data),
     })
   },
 )

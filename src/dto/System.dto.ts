@@ -6,5 +6,5 @@ interface System {
   capacityPerQuais: number
   quaisFeePerDay: number
   createdAt: Date
-  updatedAt: Date
+  updatedAt?: Date
 }

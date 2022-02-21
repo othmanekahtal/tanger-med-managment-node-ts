@@ -10,4 +10,4 @@ export {
 } from './auth.controller'
 export {deleteUser, getAllUsers, updateUser, getUser} from './user.controller'
 
-export {showSystemInfo, updateSystem} from './system.controller'
+export {showSystemInfo, updateSystem, initSystem} from './system.controller'
