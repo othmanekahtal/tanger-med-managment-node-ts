@@ -1,5 +1,5 @@
 import {Response, Request, NextFunction} from 'express'
-import AsyncCatch from '@utils/asyncCatch'
+import asyncCatch from '@utils/asyncCatch'
 import ErrorHandler from '@utils/errorHandler'
 import {
   getAllUser,
@@ -15,7 +15,7 @@ const filterObj = (obj: {[x: string]: string}, ...allowedFields: string[]) => {
   return newObj
 }
 
-export const getAllUsers = AsyncCatch(
+export const getAllUsers = asyncCatch(
   async (req: Request, res: Response, next: NextFunction) => {
     const users = await getAllUser({})
 
@@ -30,7 +30,7 @@ export const getAllUsers = AsyncCatch(
   },
 )
 
-export const getUser = AsyncCatch(
+export const getUser = asyncCatch(
   async (request: Request, response: Response) => {
     response.status(500).json({
       message: 'failed',
@@ -39,7 +39,7 @@ export const getUser = AsyncCatch(
   },
 )
 
-export const updateUser = AsyncCatch(
+export const updateUser = asyncCatch(
   async (req: Request, res: Response, next: NextFunction) => {
     const {id} = req.body
     // 1) Create error if user send password data
@@ -75,7 +75,7 @@ export const updateUser = AsyncCatch(
   },
 )
 
-export const deleteUser = AsyncCatch(
+export const deleteUser = asyncCatch(
   async (req: Request, res: Response, next: NextFunction) => {
     const {id} = req.body
     await updateUserService(id as Types.ObjectId, {active: false})

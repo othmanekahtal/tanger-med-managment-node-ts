@@ -1,5 +1,4 @@
 import {Response, Request, NextFunction, CookieOptions} from 'express'
-import AsyncCatch from '@utils/asyncCatch'
 import ErrorHandler from '@utils/errorHandler'
 import mail from '@utils/SendEmail'
 import crypto from 'crypto'
@@ -45,7 +44,7 @@ const sendTokenResponse = ({
     user,
   })
 }
-export const login = AsyncCatch(
+export const login = asyncCatch(
   async (req: Request, res: Response, next: NextFunction) => {
     const {email, password} = req.body
     if (!email || !password)
@@ -79,14 +78,14 @@ export const login = AsyncCatch(
   },
 )
 
-export const signup = AsyncCatch(async (req: Request, res: Response) => {
+export const signup = asyncCatch(async (req: Request, res: Response) => {
   const user = req.body
   user.role = undefined
   const response = await createUser(user)
   sendTokenResponse({response: res, user: response, statusCode: 201})
 })
 
-export const protect = AsyncCatch(
+export const protect = asyncCatch(
   async (req: Request, res: Response, next: NextFunction) => {
     let token: string | undefined
     token = req.cookies['jwt']
@@ -134,7 +133,7 @@ export const onlyFor =
     }
     next()
   }
-export const forgotPassword = AsyncCatch(
+export const forgotPassword = asyncCatch(
   async (req: Request, res: Response, next: NextFunction) => {
     // 1- get user based on email
     const email = req.body.email
@@ -173,7 +172,7 @@ export const forgotPassword = AsyncCatch(
     }
   },
 )
-export const resetPassword = AsyncCatch(
+export const resetPassword = asyncCatch(
   async (req: Request, res: Response, next: NextFunction) => {
     const {token} = req.params
     const {password, confirmPassword} = req.body
@@ -209,7 +208,7 @@ export const resetPassword = AsyncCatch(
     sendTokenResponse({response: res, user: user, statusCode: 200})
   },
 )
-export const updatePassword = AsyncCatch(
+export const updatePassword = asyncCatch(
   async (req: Request, res: Response, next: NextFunction) => {
     const {
       body: {
@@ -250,9 +249,8 @@ export const updatePassword = AsyncCatch(
   },
 )
 export const logout = asyncCatch(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (_: Request, res: Response, __: NextFunction) => {
     res.cookie('jwt', '', {maxAge: 0})
-    res.cookie('jwt-refresh', '', {maxAge: 0})
     res.status(204).json({})
   },
 )

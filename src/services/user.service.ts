@@ -1,5 +1,5 @@
 import {UserBaseDocument} from '@entities/UserBaseDocument.entity'
-import userModel from '@models/userModel'
+import userModel from '@models/user.model'
 import {QueryOptions, Types} from 'mongoose'
 
 export const getAllUser = async ({
