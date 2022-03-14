@@ -10,6 +10,7 @@ import {authRoute, systemRoute} from '@routes/index.route'
 import errorHandler from '@utils/errorHandler'
 import {ErrorExceptionService} from '@services/index.service'
 import cookieParser from 'cookie-parser'
+import cors from 'cors'
 
 // if cycle not finished yet At this moment , we have a router that handled in the previous middlewares
 /**
@@ -20,6 +21,12 @@ import cookieParser from 'cookie-parser'
 // Set security HTTP headers
 server.use(helmet())
 server.use(cookieParser())
+server.use(
+  cors({
+    credentials: true,
+    origin: '*',
+  }),
+)
 // Development logging
 if (process.env.NODE_ENV === 'development') {
   server.use(morgan('dev'))
