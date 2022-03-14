@@ -1,5 +1,5 @@
 import {
-  // signup,
+  signup,
   protect,
   login,
   forgotPassword,
@@ -9,7 +9,7 @@ import {
 } from '@controllers/index.controller'
 import express from 'express'
 const router = express.Router()
-// router.route('/signup').post(signup)
+router.route('/signup').post(signup)
 router.route('/login').post(login)
 router.route('/forget-password').post(forgotPassword)
 // we use patch because we need to change some fields

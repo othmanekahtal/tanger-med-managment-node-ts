@@ -51,18 +51,14 @@ server.use(mongoSanitize())
 server.use(xss())
 
 // Prevent parameter pollution
-server.use(
-  hpp({
-    whitelist: [
-      'duration',
-      'ratingsQuantity',
-      'ratingsAverage',
-      'maxGroupSize',
-      'difficulty',
-      'price',
-    ],
-  }),
-)
+// server.use(
+//   hpp({
+//     whitelist: [
+//       'duration',
+//       'ratingsQuantity',
+//     ],
+//   }),
+// )
 
 // Serving static files
 server.use(express.static(`${__dirname}/public`))
