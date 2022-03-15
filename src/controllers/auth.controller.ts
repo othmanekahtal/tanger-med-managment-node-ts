@@ -27,20 +27,21 @@ const sendTokenResponse = ({
   user: UserBaseDocument
   statusCode: number
 }) => {
-  user.password = undefined
+  // user.password = undefined
   const token = generateToken(user._id)
-  const cookieOptions: CookieOptions = {
-    expires: new Date(
-      Date.now() + +process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
-    ),
-    httpOnly: true,
-  }
-  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true
+  // const cookieOptions: CookieOptions = {
+  //   expires: new Date(
+  //     Date.now() + +process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
+  //   ),
+  //   httpOnly: true,
+  // }
+  // if (process.env.NODE_ENV === 'production') cookieOptions.secure = true
 
-  response.cookie('jwt', token, cookieOptions)
+  // response.cookie('jwt', token, cookieOptions)
+  user.password = undefined
   return response.status(statusCode).json({
     status: 'success',
-    // token,
+    token,
     user,
   })
 }
@@ -67,8 +68,8 @@ export const login = asyncCatch(
       userPassword: password,
     })
 
-    passwordsMatch &&
-      sendTokenResponse({response: res, user: response, statusCode: 200})
+    if (passwordsMatch)
+      return sendTokenResponse({response: res, user: response, statusCode: 200})
     return next(
       new ErrorHandler({
         message: 'password or email is not correct',
@@ -89,7 +90,14 @@ export const signup = asyncCatch(async (req: Request, res: Response) => {
 export const protect = asyncCatch(
   async (req: Request, res: Response, next: NextFunction) => {
     let token: string | undefined
-    token = req.cookies['jwt']
+    // token = req.cookies['jwt']
+    // let token
+    if (
+      req.headers.authorization &&
+      req.headers.authorization.startsWith('Bearer')
+    ) {
+      token = req.headers.authorization.split(' ')[1]
+    }
     !token &&
       next(
         new ErrorHandler({message: "You're not authorized !", statusCode: 401}),
