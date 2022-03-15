@@ -25,7 +25,7 @@ export default new Schema<UserBaseDocument>({
   },
   role: {
     type: String,
-    enum: ['admin', 'guide', 'lead-guide', 'user'],
+    enum: ['admin', 'guide', 'lead-guide', 'user', 'superAdmin'],
     default: 'user',
   },
   password: {
@@ -50,10 +50,7 @@ export default new Schema<UserBaseDocument>({
   resetToken: String,
   resetTokenExpiration: Date,
   updatePasswordAt: Date,
-  imageCover: {
-    type: String,
-    required: [true, 'An user must have a cover image'],
-  },
+
   active: {
     type: Boolean,
     default: true,

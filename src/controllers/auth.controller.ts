@@ -80,7 +80,8 @@ export const login = asyncCatch(
 
 export const signup = asyncCatch(async (req: Request, res: Response) => {
   const user = req.body
-  user.role = undefined
+  console.log(user)
+
   const response = await createUser(user)
   sendTokenResponse({response: res, user: response, statusCode: 201})
 })

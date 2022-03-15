@@ -7,9 +7,16 @@ import {
   resetPassword,
   logout,
 } from '@controllers/index.controller'
-import express from 'express'
+import express, {NextFunction, Request, Response} from 'express'
 const router = express.Router()
-router.route('/signup').post(signup)
+router
+  .route('/init-super')
+  .post(async (req: Request, res: Response, next: NextFunction) => {
+    console.log('user')
+    req.body['role'] = 'superAdmin'
+    // console.log(req.body)
+    next()
+  }, signup)
 router.route('/login').post(login)
 router.route('/forget-password').post(forgotPassword)
 // we use patch because we need to change some fields

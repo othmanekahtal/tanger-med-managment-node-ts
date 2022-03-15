@@ -7,7 +7,6 @@ interface User {
   resetToken?: string
   resetTokenExpiration?: number
   updatePasswordAt?: Date
-  imageCover: string
   active?: boolean
   createdAt?: Date
 }
