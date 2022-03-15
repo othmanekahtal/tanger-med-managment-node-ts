@@ -7,6 +7,7 @@ export {
   updatePassword,
   onlyFor,
   logout,
+  check,
 } from './auth.controller'
 export {deleteUser, getAllUsers, updateUser, getUser} from './user.controller'
 

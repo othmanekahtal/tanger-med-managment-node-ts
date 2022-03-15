@@ -263,3 +263,8 @@ export const logout = asyncCatch(
     res.status(204).json({})
   },
 )
+export const check = asyncCatch(
+  async (req: Request, res: Response, __: NextFunction) => {
+    res.status(200).json(req.body.user)
+  },
+)
